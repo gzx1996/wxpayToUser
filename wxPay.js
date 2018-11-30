@@ -22,15 +22,15 @@ let fnCreateUrlParam = function (json) {
 };
 
 //生成微信提现数据
-let fnGetWeixinBonus = function (option,ctx) {
+let fnGetWeixinBonus = function (option) {
   let amount = option.amount; //提现金额
   let openid = option.openid; //发起提现请求的用户openId
   let now = new Date();
-  let clientIp = ctx.app.get('host');
-  let desc = '答题情会员余额提现';//备注
-  let mch_id = ctx.app.get('mchId'); //商户号
-  let mch_appid = ctx.app.get('appId');//小程序appId
-  let wxkey = ctx.app.get('mchSecret'); //商户支付secret
+  let clientIp = "你的服务器IP";
+  let desc = '备注备注备注';//备注
+  let mch_id = "你的商户号"; //商户号
+  let mch_appid = "小程序APPID";//小程序appId
+  let wxkey = "商户支付secret"; //商户支付secret
   let date_time = now.getFullYear() + '' + (now.getMonth() + 1) + '' + now.getDate(); //年月日
   let date_no = (now.getTime() + '').substr(-8); //生成8位为日期数据，精确到毫秒
   let random_no = Math.floor(Math.random() * 99);
@@ -68,7 +68,7 @@ let fnGetWeixinBonus = function (option,ctx) {
 };
 
 //微信企业支付到零钱
-exports.wxcompay = function (ctx,openid,amount,callBack) {
+exports.wxcompay = function (openid,amount,callBack) {
   // https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers
   let host = 'api.mch.weixin.qq.com';
   let path = '/mmpaymkttransfers/promotion/transfers';
@@ -95,7 +95,7 @@ exports.wxcompay = function (ctx,openid,amount,callBack) {
     callBack( err );
   });
   let option = {amount, openid};
-  let sendData = fnGetWeixinBonus(option,ctx);
+  let sendData = fnGetWeixinBonus(option);
   req.write(sendData);
   req.end();
 };
