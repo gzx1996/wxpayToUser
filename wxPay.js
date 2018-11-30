@@ -1,3 +1,8 @@
+/**
+
+* Created by feng on 2018/08/17
+
+*/
 let Path = require('path')
 /*拼接微信企业付款字符串 */
 let xml2js = require('xml2js');
