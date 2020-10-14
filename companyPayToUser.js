@@ -1,4 +1,3 @@
-const Path = require('path')
 const xml2js = require('xml2js');
 const fs = require('fs');
 const rp = require('request-promise');
@@ -10,6 +9,8 @@ const defaultConfig = {
   mch_id: '', // 微信商户号
   mch_appid: '', // 微信开放平台appId
   mch_secret: '', // 微信商户支付secret
+  keyPath: '', // 商户号支付key
+  certPath: '' // 商户号支付cert
 }
 
 
@@ -44,23 +45,8 @@ class WxCompanyPay {
    * 批量设置options
    * @param {object} obj
    */
-  setOpt(obj) {
+  static _setOpt(obj) {
     Object.assign(this.options, obj);
-  }
-  /**
-   * 设置options
-   * @param {string} k key
-   * @param {*} v value
-   */
-  setOptKV(k, v) {
-    this.options[k] = v;
-  }
-  /**
-   * 获取options
-   * @param {string} k key
-   */
-  getConf(k) {
-    return k ? this.options[k] : this.options;
   }
   /**
    * 生成发送到微信的Xml
@@ -93,11 +79,13 @@ class WxCompanyPay {
   }
 
   static _checkConfig() {
-    let { mch_id, mch_appid, mch_secret, clientIp } = this.config;
+    let { mch_id, mch_appid, mch_secret, clientIp, keyPath, certPath } = this.config;
     if (!mch_id || mch_id.toString().length === 0) throw new Error('config错误，缺少 mch_id');
     if (!mch_appid || mch_appidd.toString().length === 0) throw new Error('config错误，缺少 mch_appid');
     if (!mch_secret || mch_secret.toString().length === 0) throw new Error('config错误，缺少 mch_secret');
     if (!clientIp || clientIp.length === 0) throw new Error('config错误，缺少 clientIp');
+    if (!keyPath || keyPath.length === 0) throw new Error('config错误，缺少 keyPath');
+    if (!certPath || certPath.length === 0) throw new Error('config错误，缺少 certPath');
   }
   static _checkOptions() {
     let { openid, amount } = this.options;
@@ -105,9 +93,10 @@ class WxCompanyPay {
     if (!amount || amount <= 0) throw new Error('options错误，缺少amount');
   }
 
-  send() {
+  async send(options) {
+    this.options = this._setOpt(options)
     let sendData = this._initXmlToSend();
-    return rp({
+    let res = await rp({
       method: 'POST',
       uri: 'https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers',
       headers: {
@@ -115,7 +104,17 @@ class WxCompanyPay {
         'Content-Length': Buffer.byteLength(sendData)
       },
       body: sendData,
+      key: fs.readFileSync(this.config.keyPath), //将微信生成的证书放入 config目录下
+      cert: fs.readFileSync(this.config.certPath),
       json: false
+    });
+    const parser = new xml2js.Parser({trim: true, explicitArray: false, explicitRoot: false});
+    return new Promise(resolve => {
+      parser.parseString(res, function (err, result) {
+        resolve(result);
+      });
     })
   }
 }
+
+module.exports =  WxCompanyPay;
