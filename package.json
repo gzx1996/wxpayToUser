@@ -1,0 +1,27 @@
+{
+  "name": "wxpaytouser",
+  "version": "1.0.0",
+  "description": "微信企业零钱打款到个人用户",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gzx1996/wxpayToUser.git"
+  },
+  "keywords": [
+    "微信，提现"
+  ],
+  "author": "norman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gzx1996/wxpayToUser/issues"
+  },
+  "homepage": "https://github.com/gzx1996/wxpayToUser#readme",
+  "dependencies": {
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "xml2js": "^0.4.23"
+  }
+}

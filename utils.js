@@ -13,7 +13,8 @@ module.exports = {
   jsonToQueryString(obj) {
     let _arr = [];
     for (let key in obj) {
-      _arr.push([obj, obj[key]].join('='));
+      let str = [key, obj[key]].join('=')
+      _arr.push(str);
     }
     return _arr.join('&');
   },
